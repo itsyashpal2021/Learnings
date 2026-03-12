@@ -1,9 +1,3 @@
-# Java Multithreading Guide
-
-This document explains **Java multithreading fundamentals**, common problems, and mechanisms Java provides to handle them.
-
----
-
 # 1. Multiprocessing vs Multithreading
 
 ## Multiprocessing
@@ -58,12 +52,12 @@ A CPU can execute **one instruction per core at a time**.
 
 Modern CPUs have **multiple cores**, which allows multiple threads to run **in parallel**.
 
-Example: 4-core CPU  
+Example: 4-core CPU
 
 Core1 → Thread A  
 Core2 → Thread B  
 Core3 → Thread C  
-Core4 → Thread D  
+Core4 → Thread D
 
 
 If there are **more threads than CPU cores**, the operating system performs **context switching**.
@@ -80,11 +74,11 @@ Steps:
 2. Load state of next thread
 3. Resume execution
 
-Time → 
+Time →
 
 Thread A       ███ --  ███   
 Thread B       --  ███ --  ███  
-Thread C       --  --  --  --  ███  
+Thread C       --  --  --  --  ███
 
 
 Even though only one thread runs at a time on a core, fast switching creates the **illusion of parallelism**.
@@ -123,7 +117,7 @@ public class Main {
 ***Important***:
 
 start() → creates new thread  
-run()   → executed inside the new thread  
+run()   → executed inside the new thread
 
 Never call run() directly because it will not create a new thread. Instead, it runs like a normal method call in the current thread. To start a new thread, you must call start().
 
@@ -151,7 +145,7 @@ Advantages:
 - Better design
 - Allows extending another class
 - Used widely with thread pools
- 
+
 # 4. Thread Lifecycle
 
 A **thread lifecycle** describes the different states a thread goes
@@ -392,7 +386,7 @@ Interleaving example:
 Thread1 read 0  
 Thread2 read 0  
 Thread1 write 1  
-Thread2 write 1  
+Thread2 write 1
 
 Final value = 1 instead of 2
 
@@ -442,7 +436,7 @@ So `count` becomes:
 ``` java
  increment()
 ```
-   
+
 
 ### Expected Behavior
 
@@ -505,363 +499,3 @@ Java provides mechanisms to fix above via:
 - volatile
 - Atomic classes
 - Executor framework
-
-## 7.1 `synchronized` Keyword in Java
-`synchronized` keyword in Java used to control access to shared resources in a multithreaded environment.
-
-It ensures that only one thread at a time can execute a section of code that requires a specific monitor lock.
-
-When a thread enters a synchronized region, it must first acquire the monitor lock associated with the object. While one thread holds the lock, other threads attempting to acquire the same lock must wait.
-
----
-
-### How `synchronized` Works
-
-1. Every object in Java has an intrinsic lock (monitor lock).
-2. When a thread enters a synchronized block or method:
-   - It acquires the monitor lock of the specified object.
-3. While the lock is held:
-   - No other thread can enter synchronized code guarded by the same lock.
-4. When the thread exits the synchronized region:
-   - The lock is released.
-
-**Key idea**
-
-Only one thread at a time can access a resource that has its monitor lock acquired.
-
----
-
-### Synchronized Methods
-
-#### Instance Synchronized Method
-
-When an instance method is marked as `synchronized`, the monitor lock is acquired on the object instance (`this`).
-
-```java
-class Counter {
-
-    int count = 0;
-
-    synchronized void increment() {
-        count++;
-    }
-}
-```
-
-Behavior:
-
-- A thread must acquire the monitor lock of the object instance before executing `increment()`.
-- If multiple threads call `increment()` on the same object, only one thread can execute it at a time.
-
----
-
-#### Static Synchronized Method
-
-When a static method is synchronized, the lock is acquired on the Class object stored in the heap.
-
-```java
-class Counter {
-
-    static int count = 0;
-
-    static synchronized void increment() {
-        count++;
-    }
-}
-```
-
-Behavior:
-
-- The thread acquires the monitor lock on `Counter.class`.
-- Only one thread across all instances can execute that method at a time.
-
----
-
-### Synchronized Blocks
-
-Instead of synchronizing an entire method, Java allows synchronizing only a specific block of code.
-
-```java
-class Counter {
-
-    int count = 0;
-
-    void increment() {
-        synchronized (this) {
-            count++;
-        }
-    }
-}
-```
-
-Here:
-
-- The monitor lock is acquired on `this` object.
-- Only the code inside the block is protected.
-
-You can synchronize on any object:
-
-```java
-class Counter {
-
-    int count = 0;
-    private final Object lock = new Object();
-
-    void increment() {
-        synchronized (lock) {
-            count++;
-        }
-    }
-}
-```
-
----
-
-### Monitor Locks
-
-Monitor locks are central to how `synchronized` works.
-
-#### Instance Methods
-
-For instance synchronized methods:
-
-Lock acquired on → Object instance
-
-Example:
-
-```java
-Counter counter = new Counter();
-counter.increment();
-```
-
-The thread acquires the monitor lock on:
-
-```
-counter
-```
-
----
-
-#### Static Methods
-
-For static synchronized methods:
-
-Lock acquired on → Class object
-
-Example:
-
-```java
-Counter.increment();
-```
-
-The thread acquires the monitor lock on:
-
-```
-Counter.class
-```
-
----
-
-### Happens-Before Guarantee with `synchronized`
-
-`synchronized` also provides a happens-before relationship in the Java Memory Model.
-
-#### Rule
-
-A thread releasing a monitor lock happens-before another thread acquiring the same monitor lock.
-
-This means:
-
-- When a thread exits a synchronized block or method, all its changes become visible to the next thread that acquires the same lock.
-  
-#### Key Summary
-
-1. **Only one thread can acquire a monitor lock on a resource at a time.**
-
-2. When a thread **enters a synchronized block**:
-   - Variables used by the thread are **loaded from main memory (heap)**.
-
-3. When a thread **exits a synchronized block**:
-   - All updates made by the thread are **flushed from registers / CPU cache back to main memory (heap)**.
-
-These rules ensure that **changes made by one thread become visible to another thread acquiring the same monitor lock**, establishing the **happens-before guarantee**.
-
----
-
-#### Example
-
-```java
-class Counter {
-
-    int count = 0;
-
-    synchronized void increment() {
-        count++;
-    }
-}
-```
-
-Execution order:
-
-```
-Thread A
-    acquires lock
-    count++
-    releases lock
-
-Thread B
-    acquires same lock
-    reads updated value
-```
-
-Because of the happens-before guarantee, the updates made by Thread A are guaranteed to be visible to Thread B once it acquires the same monitor lock.
-
----
-
-## 7.2 `volatile` keyword in java
-
-`volatile` keyword in Java is used to ensure **visibility of changes to variables across threads**.
-
-When a variable is declared as `volatile`, all reads and writes to that variable **directly interact with main memory (heap)** instead of using cached values stored in CPU registers or thread-local caches.
-
-This ensures that **when one thread updates the variable, other threads will immediately see the updated value.**
-
-## Example
-
-```java
-class FlagExample {
-
-    volatile boolean running = true;
-
-    void stop() {
-        running = false;
-    }
-
-    void runTask() {
-        while (running) {
-            // task keeps running
-        }
-    }
-}
-```
-
-Execution flow:
-
-```
-Thread A
-    running = false
-
-Thread B
-    reads running
-```
-
-Because `running` is declared `volatile`:
-
-- The write by **Thread A** is immediately visible.
-- **Thread B** will observe the updated value and exit the loop.
-
----
-
-## Happens-Before Guarantee with `volatile`
-
-The Java Memory Model defines the following rule:
-
-```
-A write to a volatile variable happens-before every subsequent read of that same variable.
-```
-
-### What this means
-
-If:
-
-```
-Thread A
-    writes volatile variable
-
-Thread B
-    reads same volatile variable
-```
-
-Then:
-
-- The write operation in **Thread A** becomes visible to **Thread B**.
-- Thread B is guaranteed to see **the most recent value**.
-
----
-
-### How `volatile` Works Internally
-
-When a variable is declared `volatile`, the JVM inserts **memory barriers** that affect how reads and writes interact with main memory.
-
-#### On Write
-
-When a thread writes to a volatile variable:
-
-1. **All previous writes by the thread are flushed to main memory.**
-2. The volatile variable is then written to main memory.
-
-This ensures that **any variable updates made before the volatile write become visible to other threads**.
-
-#### On Read
-
-When a thread reads a volatile variable:
-
-1. The thread **reads the volatile value from main memory**.
-2. **All subsequent reads will see the latest values from main memory.**
-
----
-
-## Why `volatile` Does NOT Solve Concurrency
-
-`volatile` only guarantees **visibility**, not **mutual exclusion**.
-
-This means multiple threads can still **modify a variable at the same time**, which can lead to incorrect results when operations involve multiple steps.
-
----
-
-### Example
-
-```java
-class Counter {
-
-    volatile int count = 0;
-
-    void increment() {
-        count++;
-    }
-}
-```
-
-The operation:
-
-```
-count++
-```
-
-is actually composed of multiple steps:
-
-```
-1. Read count
-2. Increment value
-3. Write updated value
-```
-
-If two threads execute this simultaneously:
-
-```
-Thread A → read count = 5
-Thread B → read count = 5
-
-Thread A → write 6
-Thread B → write 6
-```
-
-The final value becomes:
-
-```
-6 instead of 7
-```
-
-Even though `count` is volatile, **both threads were allowed to execute the operation concurrently.**
-
----
