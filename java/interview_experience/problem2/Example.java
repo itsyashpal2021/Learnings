@@ -9,5 +9,10 @@ public class Example {
 
         t1.start();
         t2.start();
+
+        /*
+        * Case1 : count is volatile, there will be missed increments due to threads invoking increment concurrently.
+        * Case2 : synchronized increment method, at least one thread will reach count 20000.
+        * */
     }
 }
