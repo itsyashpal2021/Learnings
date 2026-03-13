@@ -1,6 +1,4 @@
-## Java Multithreading Notes – Locks
-
-### What are Locks in Java?
+# Java Multithreading Notes – Locks
 
 Locks are advanced synchronization mechanisms provided in the `java.util.concurrent.locks` package that allow **explicit control over thread synchronization**.
 
@@ -46,11 +44,11 @@ Here:
 
 ---
 
-## Locks vs `synchronized`
+# Locks vs `synchronized`
 
 Both locks and `synchronized` provide **mutual exclusion**, ensuring only one thread executes a critical section at a time.
 
-### `synchronized`
+## `synchronized`
 
 - Built-in JVM feature
 - Automatically acquires and releases monitor locks
@@ -67,7 +65,7 @@ synchronized (this) {
 
 ---
 
-### Locks
+## Locks
 
 - Part of `java.util.concurrent`
 - Require **manual acquisition and release**
@@ -87,11 +85,11 @@ try {
 
 ---
 
-## Advantages of Locks over `synchronized`
+# Advantages of Locks over `synchronized`
 
 Locks provide additional capabilities not available with `synchronized`.
 
-### 1. Try Lock (Non-blocking lock attempt)
+## 1. Try Lock (Non-blocking lock attempt)
 
 A thread can attempt to acquire a lock without waiting indefinitely.
 
@@ -107,7 +105,7 @@ if (lock.tryLock()) {
 
 ---
 
-### 2. Timed Lock Attempt
+## 2. Timed Lock Attempt
 
 A thread can attempt to acquire a lock with a timeout.
 
@@ -119,7 +117,7 @@ If the lock is not available within the specified time, the attempt fails.
 
 ---
 
-### 3. Interruptible Lock Acquisition
+## 3. Interruptible Lock Acquisition
 
 A thread waiting for a lock can be **interrupted**.
 
@@ -131,7 +129,7 @@ This is not possible with `synchronized`.
 
 ---
 
-### 4. Multiple Condition Variables
+## 4. Multiple Condition Variables
 
 Locks allow multiple condition variables using `Condition`.
 
@@ -145,7 +143,7 @@ This is similar to `wait()` and `notify()` but **more flexible**.
 
 ---
 
-## How Locks Work Internally
+# How Locks Work Internally
 
 Locks are implemented using **low-level JVM mechanisms and atomic operations**.
 
@@ -176,15 +174,15 @@ This design allows locks to be **efficient under contention**.
 
 ---
 
-## Types of Locks in Java
+# Types of Locks in Java
 
 Java provides several lock implementations.
 
-### 1. ReentrantLock
+## 1. ReentrantLock
 
-### 2. ReadWriteLock
+## 2. ReadWriteLock
 
-### 3. StampedLock (advanced)
+## 3. StampedLock (advanced)
 
 The most commonly used ones are:
 
@@ -195,7 +193,7 @@ ReadWriteLock
 
 ---
 
-## ReentrantLock
+# ReentrantLock
 
 `ReentrantLock` is the most common explicit lock implementation.
 
@@ -230,7 +228,7 @@ class Counter {
 
 ---
 
-### Reentrancy Example
+## Reentrancy Example
 
 ```java
 class Example {
@@ -265,7 +263,7 @@ The lock is released only when the hold count reaches **zero**.
 
 ---
 
-## ReadWriteLock
+# ReadWriteLock
 
 `ReadWriteLock` allows **multiple readers but only one writer**.
 
@@ -280,7 +278,7 @@ Using a normal lock would block all threads, but a read-write lock allows **conc
 
 ---
 
-### Example
+## Example
 
 ```java
 import java.util.concurrent.locks.ReadWriteLock;
@@ -318,7 +316,7 @@ class DataStore {
 
 ---
 
-### Behavior
+## Behavior
 
 ```
 Multiple threads can acquire read lock simultaneously
@@ -336,7 +334,7 @@ Thread C → write lock (must wait)
 
 ---
 
-## When to Use ReadWriteLock
+# When to Use ReadWriteLock
 
 ReadWriteLock works best when:
 
@@ -353,9 +351,9 @@ Example scenarios:
 
 ---
 
-## Key Summary
+# Key Summary
 
-### Locks
+## Locks
 
 Locks provide **explicit synchronization mechanisms** with more flexibility than `synchronized`.
 
@@ -370,7 +368,7 @@ multiple condition variables
 
 ---
 
-### ReentrantLock
+## ReentrantLock
 
 ReentrantLock:
 
@@ -380,7 +378,7 @@ ReentrantLock:
 
 ---
 
-### ReadWriteLock
+## ReadWriteLock
 
 ReadWriteLock allows:
 
@@ -393,7 +391,7 @@ This improves performance when **reads greatly outnumber writes**.
 
 ---
 
-### When to Use Locks vs `synchronized`
+## When to Use Locks vs `synchronized`
 
 Use `synchronized` when:
 
