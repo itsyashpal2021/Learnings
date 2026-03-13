@@ -17,7 +17,7 @@ Multithreading is the ability of a program to execute **multiple threads (indepe
 
 A **thread** is a lightweight unit of execution that shares the same memory space with other threads in the process.
 
-interview_experience.problem1.interview_experience.problem2.Example:
+Example:
 - One thread handles user input
 - Another thread processes data
 - Another thread performs network calls
@@ -48,7 +48,7 @@ The switching happens extremely fast.
 
 **Yes, but only when multiple CPU cores exist.**
 
-interview_experience.problem1.interview_experience.problem2.Example:
+Example:
 
 | CPU Cores | Parallel Threads |
 |-----------|------------------|
@@ -68,7 +68,7 @@ Instead, the CPU rapidly switches between threads using **context switching**.
 
 This creates the illusion of parallel execution.
 
-interview_experience.problem1.interview_experience.problem2.Example:
+Example:
 ```
 Time Slice 1 → Thread A
 Time Slice 2 → Thread B
@@ -82,7 +82,7 @@ Time Slice 3 → Thread C
 Even on a single core, multithreading is beneficial.
 
 #### 1. Better Responsiveness
-interview_experience.problem1.interview_experience.problem2.Example: UI applications
+Example: UI applications
 ``` 
 Thread 1 → UI rendering
 Thread 2 → Background task
@@ -97,7 +97,7 @@ Without multithreading, UI may freeze.
 
 When one thread waits for I/O (disk, network), another thread can execute.
 
-interview_experience.problem1.interview_experience.problem2.Example:
+Example:
 ``` 
 Thread 1 → Waiting for API response
 Thread 2 → Processing user input
@@ -110,7 +110,7 @@ Thread 2 → Processing user input
 
 Multithreading allows tasks to be logically separated.
 
-interview_experience.problem1.interview_experience.problem2.Example:
+Example:
 
 - Logging thread
 - Worker thread
@@ -174,7 +174,7 @@ Stack stores:
 - Local variables
 - References to objects
 
-interview_experience.problem1.interview_experience.problem2.Example:
+Example:
 
 ```java
 Person p = new Person();
@@ -192,7 +192,7 @@ Person object
 
 The heap is where all Java objects are stored.
 
-interview_experience.problem1.interview_experience.problem2.Example:
+Example:
 ```java
 Person p = new Person();
 
@@ -247,7 +247,7 @@ Java solves this with:
 - synchronized
 - happens-before rules
 
-# 3. Java: Call by Value vs Reference (Using Person interview_experience.problem1.interview_experience.problem2.Example)
+# 3. Java: Call by Value vs Reference (Using Person Example)
 
 In **Java, everything is passed by value**, including object references.  
 When you pass an object to a method, **the value of the reference (memory address) is copied**, not the object itself.
